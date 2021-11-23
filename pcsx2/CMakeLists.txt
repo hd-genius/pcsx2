@@ -495,6 +495,7 @@ endif()
 
 set(pcsx2PADCommonSources
 		Multitap/PS2/MultitapPS2Protocol.cpp
+		PAD/Devices/PadKeyboard.cpp
 		PAD/PS1/PadPS1.cpp
 		PAD/PS1/PadPS1Protocol.cpp
 		PAD/PS2/PadPS2.cpp
@@ -507,6 +508,8 @@ set(pcsx2PADCommonHeaders
 		PAD/Gamepad.h
 		PAD/PadTypes.h
 		PAD/PadUtils.h
+		PAD/Devices/Devices.h
+		PAD/Devices/PadKeyboard.h
 		PAD/PS1/PadPS1.h
 		PAD/PS1/PadPS1Protocol.h
 		PAD/PS1/PadPS1Types.h
@@ -518,6 +521,7 @@ set(pcsx2PADCommonHeaders
 if(WIN32)
 	set(pcsx2PADSources
 		${pcsx2PADCommonSources}
+		PAD/Devices/PadXInput.cpp
 		PAD/Windows/PADConfig.cpp
 		PAD/Windows/DeviceEnumerator.cpp
 		PAD/Windows/Diagnostics.cpp
@@ -539,6 +543,7 @@ if(WIN32)
 
 	set(pcsx2PADHeaders
 		${pcsx2PADCommonHeaders}
+		PAD/Devices/PadXInput.h
 		PAD/Windows/PADConfig.h
 		PAD/Windows/DeviceEnumerator.h
 		PAD/Windows/Diagnostics.h
@@ -579,6 +584,7 @@ else(WIN32)
 
 	# PAD/Linux sources
 	set(pcsx2PADSources
+		PAD/Devices/PadEvDev.cpp
 		PAD/Linux/Config.cpp
 		PAD/Linux/Device.cpp
 		PAD/Linux/InputManager.cpp
@@ -598,6 +604,7 @@ else(WIN32)
 
 	# PAD/Linux headers
 	set(pcsx2PADHeaders
+		PAD/Devices/PadEvDev.h
 		PAD/Linux/bitwise.h
 		PAD/Linux/Config.h
 		PAD/Linux/Device.h
