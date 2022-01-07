@@ -294,6 +294,7 @@
     </Filter>
     <Filter Include="Host">
       <UniqueIdentifier>{65f21394-287a-471b-a0c1-d8f0d5d95a81}</UniqueIdentifier>
+    </Filter>
     <Filter Include="System\Ps2\Multitap">
       <UniqueIdentifier>{c24e4005-7124-41b4-ad91-24080a9b7372}</UniqueIdentifier>
     </Filter>
@@ -1686,6 +1687,7 @@
     </ClCompile>
     <ClCompile Include="Host.cpp">
       <Filter>Host</Filter>
+    </ClCompile>
     <ClCompile Include="Memcard\PS1\MemcardPS1.cpp">
       <Filter>System\Ps2\Memcard\PS1</Filter>
     </ClCompile>
@@ -2856,6 +2858,7 @@
     </ClInclude>
     <ClInclude Include="Frontend\ImGuiManager.h">
       <Filter>Host</Filter>
+    </ClInclude>
     <ClInclude Include="Memcard\PS1\MemcardPS1.h">
       <Filter>System\Ps2\Memcard\PS1</Filter>
     </ClInclude>
