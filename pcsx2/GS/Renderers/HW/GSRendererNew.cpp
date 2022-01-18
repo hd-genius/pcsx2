@@ -641,7 +641,7 @@ void GSRendererNew::EmulateBlending(bool& DATE_PRIMID, bool& DATE_BARRIER)
 			m_conf.ps.hdr = 1;
 			sw_blending = true; // Enable sw blending for the HDR algo
 		}
-		else if (sw_blending && g_gs_device->Features().texture_barrier)
+		else if (sw_blending)
 		{
 			// A slow algo that could requires several passes (barely used)
 			GL_INS("COLCLIP SW mode ENABLED");
