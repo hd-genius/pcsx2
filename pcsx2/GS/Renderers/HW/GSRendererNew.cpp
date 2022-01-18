@@ -544,28 +544,31 @@ void GSRendererNew::EmulateBlending(bool& DATE_PRIMID, bool& DATE_BARRIER)
 	const bool blend_mix3 = !!(blend_flag & BLEND_MIX3);
 	bool blend_mix = (blend_mix1 || blend_mix2 || blend_mix3);
 
-	// SW Blend is (nearly) free. Let's use it.
-	const bool impossible_or_free_blend = (blend_flag & BLEND_A_MAX) // Impossible blending
-		|| blend_non_recursive                 // Free sw blending, doesn't require barriers or reading fb
-		|| accumulation_blend                  // Mix of hw/sw blending
-		|| (m_prim_overlap == PRIM_OVERLAP_NO) // Blend can be done in a single draw
-		|| (m_conf.require_full_barrier);      // Another effect (for example fbmask) already requires a full barrier
+	const bool alpha_c2_high_one = (ALPHA.C == 2 && ALPHA.FIX > 128u);
+	const bool alpha_c0_high_max_one = (ALPHA.C == 0 && GetAlphaMinMax().max > 128);
 
 	// Warning no break on purpose
 	// Note: the [[fallthrough]] attribute tell compilers not to complain about not having breaks.
 	bool sw_blending = false;
 	if (g_gs_device->Features().texture_barrier)
 	{
+		// SW Blend is (nearly) free. Let's use it.
+		const bool impossible_or_free_blend = (blend_flag & BLEND_A_MAX) // Impossible blending
+			|| blend_non_recursive                 // Free sw blending, doesn't require barriers or reading fb
+			|| accumulation_blend                  // Mix of hw/sw blending
+			|| (m_prim_overlap == PRIM_OVERLAP_NO) // Blend can be done in a single draw
+			|| (m_conf.require_full_barrier);      // Another effect (for example fbmask) already requires a full barrier
+
 		switch (GSConfig.AccurateBlendingUnit)
 		{
 			case AccBlendLevel::Ultra:
 				sw_blending |= true;
 				[[fallthrough]];
 			case AccBlendLevel::Full:
-				sw_blending |= ALPHA.A != ALPHA.B && ALPHA.C == 0 && GetAlphaMinMax().max > 128;
+				sw_blending |= ALPHA.A != ALPHA.B && alpha_c0_high_max_one;
 				[[fallthrough]];
 			case AccBlendLevel::High:
-				sw_blending |= ALPHA.C == 1 || (ALPHA.A != ALPHA.B && ALPHA.C == 2 && ALPHA.FIX > 128u);
+				sw_blending |= ALPHA.C == 1 || (ALPHA.A != ALPHA.B && alpha_c2_high_one);
 				[[fallthrough]];
 			case AccBlendLevel::Medium:
 				// Initial idea was to enable accurate blending for sprite rendering to handle
@@ -577,13 +580,29 @@ void GSRendererNew::EmulateBlending(bool& DATE_PRIMID, bool& DATE_BARRIER)
 				sw_blending |= impossible_or_free_blend;
 				[[fallthrough]];
 			case AccBlendLevel::Minimum:
-				/*sw_blending |= accumulation_blend*/;
+				break;
 		}
 	}
 	else
 	{
-		if (static_cast<u8>(GSConfig.AccurateBlendingUnit) >= static_cast<u8>(AccBlendLevel::Basic))
-			sw_blending |= accumulation_blend || blend_non_recursive;
+		switch (GSConfig.AccurateBlendingUnit)
+		{
+			case AccBlendLevel::Ultra:
+				sw_blending |= (m_prim_overlap == PRIM_OVERLAP_NO);
+				[[fallthrough]];
+			case AccBlendLevel::Full:
+				sw_blending |= ((alpha_c2_high_one || alpha_c0_high_max_one) && (m_prim_overlap == PRIM_OVERLAP_NO));
+				[[fallthrough]];
+			case AccBlendLevel::High:
+				sw_blending |= (!blend_mix && (alpha_c2_high_one || alpha_c0_high_max_one) && (m_prim_overlap == PRIM_OVERLAP_NO));
+				[[fallthrough]];
+			case AccBlendLevel::Medium:
+			case AccBlendLevel::Basic:
+				sw_blending |= accumulation_blend || blend_non_recursive;
+				[[fallthrough]];
+			case AccBlendLevel::Minimum:
+				break;
+		}
 	}
 
 	// Do not run BLEND MIX if sw blending is already present, it's less accurate
@@ -721,11 +740,10 @@ void GSRendererNew::EmulateBlending(bool& DATE_PRIMID, bool& DATE_BARRIER)
 			// Disable HW blending
 			m_conf.blend = {};
 
-			m_conf.require_full_barrier |= !blend_non_recursive;
-
-			// Only BLEND_NO_REC should hit this code path for now
-			if (!g_gs_device->Features().texture_barrier)
-				ASSERT(blend_non_recursive);
+			if (g_gs_device->Features().texture_barrier)
+				m_conf.require_full_barrier |= !blend_non_recursive;
+			else
+				m_conf.require_one_barrier |= !blend_non_recursive;
 		}
 
 		// Require the fix alpha vlaue
