@@ -1219,11 +1219,7 @@ void GSRendererNew::DrawPrims(GSTexture* rt, GSTexture* ds, GSTextureCache::Sour
 	// Upscaling hack to avoid various line/grid issues
 	MergeSprite(tex);
 
-	// Always check if primitive overlap as it is used in plenty of effects.
-	if (g_gs_device->Features().texture_barrier)
-		m_prim_overlap = PrimitiveOverlap();
-	else
-		m_prim_overlap = PRIM_OVERLAP_UNKNOW; // Prim overlap check is useless without texture barrier
+	m_prim_overlap = PrimitiveOverlap();
 
 	// Detect framebuffer read that will need special handling
 	if (g_gs_device->Features().texture_barrier && (m_context->FRAME.Block() == m_context->TEX0.TBP0) && PRIM->TME && GSConfig.AccurateBlendingUnit != AccBlendLevel::Minimum)
