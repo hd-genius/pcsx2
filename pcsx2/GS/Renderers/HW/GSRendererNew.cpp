@@ -671,7 +671,7 @@ void GSRendererNew::EmulateBlending(bool& DATE_PRIMID, bool& DATE_BARRIER)
 			}
 			else
 			{
-				m_conf.ps.pabe = blend_non_recursive;
+				m_conf.ps.pabe = !(accumulation_blend || blend_mix);
 			}
 		}
 		else if (ALPHA.A == 0 && ALPHA.B == 1 && ALPHA.C == 0 && ALPHA.D == 1)
