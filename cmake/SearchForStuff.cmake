@@ -162,10 +162,10 @@ if(QT_BUILD)
 
 	# Demangler for the debugger
 	add_subdirectory(3rdparty/demangler EXCLUDE_FROM_ALL)
-endif()
-
-if(NOT WIN32 AND QT_BUILD)
-	find_package(CURL REQUIRED)
+	
+	if(NOT WIN32)
+		find_package(CURL REQUIRED)
+	endif()
 endif()
 
 add_subdirectory(3rdparty/lzma EXCLUDE_FROM_ALL)
