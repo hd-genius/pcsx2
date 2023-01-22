@@ -129,45 +129,6 @@ if (${zstd_TYPE} STREQUAL System)
 endif()
 find_optional_system_library(libzip 3rdparty/libzip 1.8.0)
 
-if(QT_BUILD)
-	# Default to bundled Qt6 for Windows.
-	if(WIN32 AND NOT DEFINED Qt6_DIR)
-		set(Qt6_DIR ${CMAKE_SOURCE_DIR}/3rdparty/qt/6.4.0/msvc2022_64/lib/cmake/Qt6)
-	endif()
-
-	# Find the Qt components that we need.
-	find_package(Qt6 COMPONENTS CoreTools Core GuiTools Gui WidgetsTools Widgets Network LinguistTools REQUIRED)
-
-	if (APPLE AND CMAKE_OSX_DEPLOYMENT_TARGET AND "${CMAKE_OSX_DEPLOYMENT_TARGET}" VERSION_LESS 10.15)
-		get_target_property(QT_FEATURES Qt6::Core QT_ENABLED_PUBLIC_FEATURES)
-		if (cxx17_filesystem IN_LIST QT_FEATURES)
-			message("Qt compiled with std::filesystem support, requires macOS 10.15")
-			set(CMAKE_OSX_DEPLOYMENT_TARGET 10.15)
-		endif()
-	endif()
-
-	# We use the bundled (latest) SDL version for Qt.
-	find_optional_system_library(SDL2 3rdparty/sdl2 2.0.22)
-
-	# rcheevos backend for RetroAchievements.
-	if(USE_ACHIEVEMENTS)
-		add_subdirectory(3rdparty/rcheevos EXCLUDE_FROM_ALL)
-	endif()
-
-	# Discord-RPC library for rich presence.
-	if(USE_DISCORD_PRESENCE)
-		add_subdirectory(3rdparty/rapidjson EXCLUDE_FROM_ALL)
-		add_subdirectory(3rdparty/discord-rpc EXCLUDE_FROM_ALL)
-	endif()
-
-	# Demangler for the debugger
-	add_subdirectory(3rdparty/demangler EXCLUDE_FROM_ALL)
-	
-	if(NOT WIN32)
-		find_package(CURL REQUIRED)
-	endif()
-endif()
-
 add_subdirectory(3rdparty/lzma EXCLUDE_FROM_ALL)
 add_subdirectory(3rdparty/libchdr EXCLUDE_FROM_ALL)
 
