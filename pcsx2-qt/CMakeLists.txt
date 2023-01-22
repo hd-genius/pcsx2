@@ -6,7 +6,7 @@ if (WIN32)
 		GIT_REPOSITORY https://github.com/qt/qtbase.git
 		GIT_TAG        bb6fba1834bc3c41a45a198aadd668b8fa58952c # 6.5 branch
 	)
-endnif()
+endif()
 
 # Find the Qt components that we need.
 find_package(Qt6 COMPONENTS CoreTools Core GuiTools Gui WidgetsTools Widgets Network LinguistTools REQUIRED)
