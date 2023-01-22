@@ -1,6 +1,7 @@
 #-------------------------------------------------------------------------------
 #                       Search all libraries on the system
 #-------------------------------------------------------------------------------
+include(FetchContent)
 if(EXISTS ${PROJECT_SOURCE_DIR}/.git)
 	find_package(Git)
 endif()
