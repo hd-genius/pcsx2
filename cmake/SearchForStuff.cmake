@@ -127,7 +127,14 @@ if (${zstd_TYPE} STREQUAL System)
 	alias_library(Zstd::Zstd zstd::libzstd_shared)
 	alias_library(pcsx2-zstd zstd::libzstd_shared)
 endif()
-find_optional_system_library(libzip 3rdparty/libzip 1.8.0)
+
+FetchContent_Declare(
+	libzip
+	GIT_REPOSITORY https://github.com/nih-at/libzip.git
+	GIT_TAG        bdc03ab23b703fcc516436d6ebcbfb6ac4484033
+)
+
+find_package(libzip)
 
 add_subdirectory(3rdparty/lzma EXCLUDE_FROM_ALL)
 add_subdirectory(3rdparty/libchdr EXCLUDE_FROM_ALL)
