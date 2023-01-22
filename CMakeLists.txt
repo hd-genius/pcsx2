@@ -11,7 +11,7 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 endif()
 
 # Project Name
-project(Pcsx2)
+project(Pcsx2 HOMEPAGE_URL https://github.com/PCSX2/pcsx2)
 
 # Variable to check that people use the good file
 set(TOP_CMAKE_WAS_SOURCED TRUE)
