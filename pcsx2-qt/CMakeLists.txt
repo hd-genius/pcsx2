@@ -1,17 +1,22 @@
-# Default to bundled Qt6 for Windows.
-if(WIN32 AND NOT DEFINED Qt6_DIR)
-set(Qt6_DIR ${CMAKE_SOURCE_DIR}/3rdparty/qt/6.4.0/msvc2022_64/lib/cmake/Qt6)
-endif()
+include(FetchContent)
+
+if (WIN32) 
+	FetchContent_Declare(
+		Qt6
+		GIT_REPOSITORY https://github.com/qt/qtbase.git
+		GIT_TAG        bb6fba1834bc3c41a45a198aadd668b8fa58952c # 6.5 branch
+	)
+endnif()
 
 # Find the Qt components that we need.
 find_package(Qt6 COMPONENTS CoreTools Core GuiTools Gui WidgetsTools Widgets Network LinguistTools REQUIRED)
 
 if (APPLE AND CMAKE_OSX_DEPLOYMENT_TARGET AND "${CMAKE_OSX_DEPLOYMENT_TARGET}" VERSION_LESS 10.15)
-get_target_property(QT_FEATURES Qt6::Core QT_ENABLED_PUBLIC_FEATURES)
-if (cxx17_filesystem IN_LIST QT_FEATURES)
-message("Qt compiled with std::filesystem support, requires macOS 10.15")
-set(CMAKE_OSX_DEPLOYMENT_TARGET 10.15)
-endif()
+	get_target_property(QT_FEATURES Qt6::Core QT_ENABLED_PUBLIC_FEATURES)
+	if (cxx17_filesystem IN_LIST QT_FEATURES)
+	message("Qt compiled with std::filesystem support, requires macOS 10.15")
+		set(CMAKE_OSX_DEPLOYMENT_TARGET 10.15)
+	endif()
 endif()
 
 # We use the bundled (latest) SDL version for Qt.
