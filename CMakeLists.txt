@@ -60,6 +60,9 @@ if (QT_BUILD)
 	endif()
 endif()
 
+# libretro core
+add_subdirectory(pcsx2-libretro)
+
 # tests
 if(ACTUALLY_ENABLE_TESTS)
 	set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)

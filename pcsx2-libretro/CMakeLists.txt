@@ -1,0 +1,1 @@
+add_library(pcsx2-libretro-core SHARED libretro.h libretro.cpp)
